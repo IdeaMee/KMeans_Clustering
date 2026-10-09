@@ -7,10 +7,15 @@ SEED = None    # fixed number = same result every run | None = random every run
 
 # ---------- Input: read images ----------
 folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Data_set")
-files = sorted(f for f in os.listdir(folder) if f.lower().endswith(".jpg"))
+files = sorted(f for f in os.listdir(folder) if f.lower().endswith((".jpg", ".png")))
 names = [f.split("_")[1].split(".")[0] for f in files]   # 6752300496_Max.jpg -> Max
 
-imgs = [plt.imread(os.path.join(folder, f)) for f in files]
+imgs = []
+for f in files:
+    x = plt.imread(os.path.join(folder, f))
+    if x.dtype != np.uint8:    # png is read as 0-1, scale to 0-255 like jpg
+        x = x * 255
+    imgs.append(x)
 X = np.array([x.flatten() for x in imgs], dtype=float)
 
 # ---------- K-means ----------
