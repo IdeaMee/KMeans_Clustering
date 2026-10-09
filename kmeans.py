@@ -15,3 +15,10 @@ X = np.array([x.flatten() for x in imgs], dtype=float)
 # ---------- K-means ----------
 pick = np.random.permutation(len(X))[:K]
 C = X[pick]
+for it in range(10):
+    D = np.zeros((len(X), K))
+    for k in range(K):
+        D[:, k] = np.sqrt(np.sum((X - C[k]) ** 2, axis=1))
+    idx = np.argmin(D, axis=1)
+    for k in range(K):
+        C[k] = np.mean(X[idx == k], axis=0)
