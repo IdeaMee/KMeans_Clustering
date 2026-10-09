@@ -16,4 +16,12 @@ X = np.array([x.flatten() for x in imgs], dtype=float)
 # ---------- K-means ----------
 np.random.seed(SEED)
 C = X[np.random.permutation(len(X))[:K]]
-print(C.shape)
+for it in range(20):
+    D = np.zeros((len(X), K))
+    for k in range(K):
+        D[:, k] = np.sum((X - C[k]) ** 2, axis=1)
+    idx = np.argmin(D, axis=1)
+    for k in range(K):
+        if np.any(idx == k):
+            C[k] = np.mean(X[idx == k], axis=0)
+print(idx)
