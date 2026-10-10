@@ -12,14 +12,15 @@ names = [f.split("_")[1].split(".")[0] for f in files]
 imgs = [plt.imread(os.path.join(folder, f)) for f in files]
 X = np.array([x.flatten() for x in imgs], dtype=float)
 
-# ---------- K-means ----------
+# ---------- K-means (Manhattan distance) ----------
 pick = np.random.permutation(len(X))[:K]
 C = X[pick]
 for it in range(10):
     D = np.zeros((len(X), K))
     for k in range(K):
-        D[:, k] = np.sqrt(np.sum((X - C[k]) ** 2, axis=1))
+        D[:, k] = np.sum(np.abs(X - C[k]), axis=1)
     idx = np.argmin(D, axis=1)
+    print(f"Iter {it + 1}: cluster sizes = {np.bincount(idx, minlength=K).tolist()}")
     for k in range(K):
         C[k] = np.mean(X[idx == k], axis=0)
 
