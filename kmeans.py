@@ -29,4 +29,9 @@ for it in range(20):
     for k in range(K):
         if np.any(idx == k):
             C[k] = np.mean(X[idx == k], axis=0)
-print(idx)
+
+# ---------- Output: who is in each cluster ----------
+print()
+for k in range(K):
+    members = [names[j] for j in range(len(X)) if idx[j] == k]
+    print(f"Cluster {k + 1}: " + (", ".join(members) if members else "(empty)"))
