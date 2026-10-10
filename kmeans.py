@@ -18,14 +18,15 @@ for f in files:
     imgs.append(x)
 X = np.array([x.flatten() for x in imgs], dtype=float)
 
-# ---------- K-means ----------
+# ---------- K-means (Manhattan distance) ----------
 np.random.seed(SEED)
 C = X[np.random.permutation(len(X))[:K]]
-for it in range(20):
+for it in range(1, 21):
     D = np.zeros((len(X), K))
     for k in range(K):
-        D[:, k] = np.sum((X - C[k]) ** 2, axis=1)
+        D[:, k] = np.sum(np.abs(X - C[k]), axis=1)
     idx = np.argmin(D, axis=1)
+    print(f"Iter {it}: cluster sizes = {np.bincount(idx, minlength=K).tolist()}")
     for k in range(K):
         if np.any(idx == k):
             C[k] = np.mean(X[idx == k], axis=0)
