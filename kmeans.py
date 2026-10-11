@@ -36,3 +36,16 @@ print()
 for k in range(K):
     members = [names[j] for j in range(len(X)) if idx[j] == k]
     print(f"Cluster {k + 1}: " + (", ".join(members) if members else "(empty)"))
+
+# ---------- Images of each cluster ----------
+cols = max(np.bincount(idx, minlength=K).max(), 1)
+fig, axes = plt.subplots(K, cols, figsize=(cols * 1.4 + 1, K * 2), squeeze=False)
+for ax in axes.flatten():
+    ax.axis("off")
+for k in range(K):
+    axes[k, 0].text(-0.15, 0.5, f"Cluster {k + 1}", transform=axes[k, 0].transAxes,
+                    ha="right", va="center", fontsize=10)
+    for c, j in enumerate(np.where(idx == k)[0]):
+        axes[k, c].imshow(imgs[j], cmap="gray", vmin=0, vmax=255)
+        axes[k, c].set_title(names[j], fontsize=8)
+plt.show()
