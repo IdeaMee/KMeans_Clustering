@@ -48,4 +48,5 @@ for k in range(K):
     for c, j in enumerate(np.where(idx == k)[0]):
         axes[k, c].imshow(imgs[j], cmap="gray", vmin=0, vmax=255)
         axes[k, c].set_title(names[j], fontsize=8)
+plt.subplots_adjust(left=0.1)
 plt.show()
