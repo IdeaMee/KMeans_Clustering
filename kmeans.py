@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 K = 3  # clusters
+MAX_ITER = 100
 
 # ---------- Input: read images ----------
 folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Data_set")  # Data_set folder
@@ -15,14 +16,23 @@ X = np.array([x.flatten() for x in imgs], dtype=float)
 # ---------- K-means (Manhattan distance) ----------
 pick = np.random.permutation(len(X))[:K]
 C = X[pick]
-for it in range(10):
+it = 0
+while True:
+    it += 1
     D = np.zeros((len(X), K))
     for k in range(K):
         D[:, k] = np.sum(np.abs(X - C[k]), axis=1)
     idx = np.argmin(D, axis=1)
-    print(f"Iter {it + 1}: cluster sizes = {np.bincount(idx, minlength=K).tolist()}")
+    print(f"Iter {it}: cluster sizes = {np.bincount(idx, minlength=K).tolist()}")
+    Cold = C.copy()
     for k in range(K):
         C[k] = np.mean(X[idx == k], axis=0)
+    if np.sum(np.abs(Cold - C)) == 0:
+        print("finished")
+        break
+    if it == MAX_ITER:
+        print(f"stopped: reached {MAX_ITER} iterations")
+        break
 
 # ---------- Output: who is in each cluster ----------
 print()
