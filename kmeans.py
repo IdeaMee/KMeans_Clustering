@@ -26,7 +26,8 @@ while True:
     print(f"Iter {it}: cluster sizes = {np.bincount(idx, minlength=K).tolist()}")
     Cold = C.copy()
     for k in range(K):
-        C[k] = np.mean(X[idx == k], axis=0)
+        if np.any(idx == k):
+            C[k] = np.mean(X[idx == k], axis=0)
     if np.sum(np.abs(Cold - C)) == 0:
         print("finished")
         break
