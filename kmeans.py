@@ -11,8 +11,8 @@ folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Data_set")
 files = sorted(f for f in os.listdir(folder) if f.lower().endswith(".jpg"))
 names = [f.split("_")[1].split(".")[0] for f in files]   # 6752300496_Max.jpg -> Max
 
-imgs = [plt.imread(os.path.join(folder, f)) for f in files]
-X = np.array([x.flatten() for x in imgs], dtype=float)
+imgs = [plt.imread(os.path.join(folder, f)) for f in files]   # N images, each (180, 140)
+X = np.array([x.flatten() for x in imgs], dtype=float)   # (N, 25200)
 
 # ---------- K-means (Manhattan distance) ----------
 np.random.seed(SEED)
@@ -20,15 +20,15 @@ C = X[np.random.permutation(len(X))[:K]]
 it = 0
 while True:
     it += 1
-    D = np.zeros((len(X), K))
+    D = np.zeros((len(X), K))                            # (N, K)
     for k in range(K):
-        D[:, k] = np.sum(np.abs(X - C[k]), axis=1)
-    idx = np.argmin(D, axis=1)
+        D[:, k] = np.sum(np.abs(X - C[k]), axis=1)       # (N,)
+    idx = np.argmin(D, axis=1)                           # (N,)
     print(f"Iter {it}: cluster sizes = {np.bincount(idx, minlength=K).tolist()}")
     Cold = C.copy()
     for k in range(K):
         if np.any(idx == k):
-            C[k] = np.mean(X[idx == k], axis=0)
+            C[k] = np.mean(X[idx == k], axis=0)          # (25200,)
     if np.sum(np.abs(Cold - C)) == 0:
         print("finished")
         break
