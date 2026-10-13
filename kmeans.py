@@ -16,6 +16,7 @@ X = np.array([x.flatten() for x in imgs], dtype=float)
 # ---------- K-means (Manhattan distance) ----------
 pick = np.random.permutation(len(X))[:K]
 C = X[pick]
+print("Initial centroids: " + ", ".join(names[j] for j in pick))
 it = 0
 while True:
     it += 1
