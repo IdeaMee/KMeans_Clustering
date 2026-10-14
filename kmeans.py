@@ -2,8 +2,8 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-K = 3  # clusters
-SEED = 0  # fixed number = same result every run | None = random every run
+K = 4                                                   # clusters
+SEED = 0    # fixed number = same result every run | None = random every run
 MAX_ITER = 100
 
 # ---------- Input: read images ----------
@@ -16,22 +16,22 @@ X = np.array([x.flatten() for x in imgs], dtype=float)  # 16 x 25200
 
 # ---------- K-means (Manhattan distance) ----------
 np.random.seed(SEED)
-pick = np.random.permutation(len(X))[:K]  # K
-C = X[pick]  # K x 25200
+pick = np.random.permutation(len(X))[:K]                # K
+C = X[pick]                                             # K x 25200
 print("Initial centroids: " + ", ".join(names[j] for j in pick))
 it = 0
 while True:
     it += 1
-    D = np.zeros((len(X), K))  # Assign: 16 x K
+    D = np.zeros((len(X), K))                           # Assign: 16 x K
     for k in range(K):
-        D[:, k] = np.sum(np.abs(X - C[k]), axis=1)  # 16 x 25200 - 25200 = 16
-    idx = np.argmin(D, axis=1)  # 16 x K -> 16
+        D[:, k] = np.sum(np.abs(X - C[k]), axis=1)      # 16 x 25200 - 25200 = 16
+    idx = np.argmin(D, axis=1)                          # 16 x K -> 16
     print(f"Iter {it}: cluster sizes = {np.bincount(idx, minlength=K).tolist()}")  # K
-    Cold = C.copy()  # Update: K x 25200
+    Cold = C.copy()                                     # Update: K x 25200
     for k in range(K):
-        if np.any(idx == k):  # 16
-            C[k] = np.mean(X[idx == k], axis=0)  # n x 25200 -> 25200
-    if np.sum(np.abs(Cold - C)) == 0:  # K x 25200 - K x 25200
+        if np.any(idx == k):                            # 16
+            C[k] = np.mean(X[idx == k], axis=0)         # n x 25200 -> 25200
+    if np.sum(np.abs(Cold - C)) == 0:                   # K x 25200 - K x 25200
         print("finished")
         break
     if it == MAX_ITER:
@@ -52,7 +52,7 @@ for ax in axes.flatten():
 for k in range(K):
     axes[k, 0].text(-0.15, 0.5, f"Cluster {k + 1}", transform=axes[k, 0].transAxes,
                     ha="right", va="center", fontsize=10)
-    for c, j in enumerate(np.where(idx == k)[0]):  # n images
+    for c, j in enumerate(np.where(idx == k)[0]):       # n images
         axes[k, c].imshow(imgs[j], cmap="gray", vmin=0, vmax=255)  # 180 x 140
         axes[k, c].set_title(names[j], fontsize=8)
 plt.subplots_adjust(left=0.1)
