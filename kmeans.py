@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 K = 3  # clusters
+SEED = 0  # fixed number = same result every run | None = random every run
 MAX_ITER = 100
 
 # ---------- Input: read images ----------
@@ -14,6 +15,7 @@ imgs = [plt.imread(os.path.join(folder, f)) for f in files]  # 16 x (180 x 140)
 X = np.array([x.flatten() for x in imgs], dtype=float)  # 16 x 25200
 
 # ---------- K-means (Manhattan distance) ----------
+np.random.seed(SEED)
 pick = np.random.permutation(len(X))[:K]  # K
 C = X[pick]  # K x 25200
 print("Initial centroids: " + ", ".join(names[j] for j in pick))
