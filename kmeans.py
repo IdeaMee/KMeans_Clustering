@@ -8,7 +8,7 @@ MAX_ITER = 100
 
 # ---------- Input: read images ----------
 folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Data_set")  # Data_set folder
-files = [f for f in os.listdir(folder) if f.lower().endswith(".jpg")]  # 16 files
+files = sorted(f for f in os.listdir(folder) if f.lower().endswith(".jpg"))  # 16 files
 names = [f.split("_")[1].split(".")[0] for f in files]  # 16 names
 
 imgs = [plt.imread(os.path.join(folder, f)) for f in files]  # 16 x (180 x 140)
