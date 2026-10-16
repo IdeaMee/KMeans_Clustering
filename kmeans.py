@@ -2,34 +2,36 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-K = 4          # number of clusters
+K = 4                                                   # clusters
 SEED = 0    # fixed number = same result every run | None = random every run
 MAX_ITER = 100
 
 # ---------- Input: read images ----------
-folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Data_set")
-files = sorted(f for f in os.listdir(folder) if f.lower().endswith(".jpg"))
-names = [f.split("_")[1].split(".")[0] for f in files]   # 6752300496_Max.jpg -> Max
+folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), "Data_set")  # Data_set folder
+files = sorted(f for f in os.listdir(folder) if f.lower().endswith(".jpg"))  # 16 files
+names = [f.split("_")[1].split(".")[0] for f in files]  # 16 names
 
-imgs = [plt.imread(os.path.join(folder, f)) for f in files]   # N images, each (180, 140)
-X = np.array([x.flatten() for x in imgs], dtype=float)   # (N, 25200)
+imgs = [plt.imread(os.path.join(folder, f)) for f in files]  # 16 x (180 x 140)
+X = np.array([x.flatten() for x in imgs], dtype=float)  # 16 x 25200
 
 # ---------- K-means (Manhattan distance) ----------
 np.random.seed(SEED)
-C = X[np.random.permutation(len(X))[:K]]                 # (K, 25200)
+pick = np.random.permutation(len(X))[:K]                # K
+C = X[pick]                                             # K x 25200
+print("Initial centroids: " + ", ".join(names[j] for j in pick))
 it = 0
 while True:
     it += 1
-    D = np.zeros((len(X), K))                            # (N, K)
+    D = np.zeros((len(X), K))                           # Assign: 16 x K
     for k in range(K):
-        D[:, k] = np.sum(np.abs(X - C[k]), axis=1)       # (N,)
-    idx = np.argmin(D, axis=1)                           # (N,)
-    print(f"Iter {it}: cluster sizes = {np.bincount(idx, minlength=K).tolist()}")
-    Cold = C.copy()
+        D[:, k] = np.sum(np.abs(X - C[k]), axis=1)      # 16 x 25200 - 25200 = 16
+    idx = np.argmin(D, axis=1)                          # 16 x K -> 16
+    print(f"Iter {it}: cluster sizes = {np.bincount(idx, minlength=K).tolist()}")  # K
+    Cold = C.copy()                                     # Update: K x 25200
     for k in range(K):
-        if np.any(idx == k):
-            C[k] = np.mean(X[idx == k], axis=0)          # (25200,)
-    if np.sum(np.abs(Cold - C)) == 0:
+        if np.any(idx == k):                            # 16
+            C[k] = np.mean(X[idx == k], axis=0)         # n x 25200 -> 25200
+    if np.sum(np.abs(Cold - C)) == 0:                   # K x 25200 - K x 25200
         print("finished")
         break
     if it == MAX_ITER:
@@ -39,19 +41,19 @@ while True:
 # ---------- Output: who is in each cluster ----------
 print()
 for k in range(K):
-    members = [names[j] for j in range(len(X)) if idx[j] == k]
+    members = [names[j] for j in range(len(X)) if idx[j] == k]  # n names
     print(f"Cluster {k + 1}: " + (", ".join(members) if members else "(empty)"))
 
 # ---------- Images of each cluster ----------
 cols = max(np.bincount(idx, minlength=K).max(), 1)
-fig, axes = plt.subplots(K, cols, figsize=(cols * 1.4 + 1, K * 2), squeeze=False)
+fig, axes = plt.subplots(K, cols, figsize=(cols * 1.4 + 1, K * 2), squeeze=False)  # K x cols
 for ax in axes.flatten():
     ax.axis("off")
 for k in range(K):
     axes[k, 0].text(-0.15, 0.5, f"Cluster {k + 1}", transform=axes[k, 0].transAxes,
                     ha="right", va="center", fontsize=10)
-    for c, j in enumerate(np.where(idx == k)[0]):
-        axes[k, c].imshow(imgs[j], cmap="gray", vmin=0, vmax=255)
+    for c, j in enumerate(np.where(idx == k)[0]):       # n images
+        axes[k, c].imshow(imgs[j], cmap="gray", vmin=0, vmax=255)  # 180 x 140
         axes[k, c].set_title(names[j], fontsize=8)
 plt.subplots_adjust(left=0.1)
 plt.show()
